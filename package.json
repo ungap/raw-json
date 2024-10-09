@@ -1,0 +1,19 @@
+{
+  "name": "@ungap/raw-json",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "index.js",
+  "module": "index.js",
+  "keywords": ["rawJSON", "isRawJSON", "polyfill", "ponyfill"],
+  "author": "Andrea Giammarchi",
+  "license": "ISC",
+  "description": "JSON.rawJSON and isRawJSON ponyfill",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ungap/raw-json.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ungap/raw-json/issues"
+  },
+  "homepage": "https://github.com/ungap/raw-json#readme"
+}
