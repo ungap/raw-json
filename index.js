@@ -32,6 +32,42 @@ if (!rawJSON) {
     throw new TypeError('Unexpected ' + type);
   };
 
+  // parse
+  const p = parse;
+  parse = (text, reviver) => {
+    if (!reviver) return p(text);
+    const context = new Map;
+    const strings = [];
+    return p(
+      text
+      // drop strings from the JSON
+      .replace(
+        /"(?:(?=(\\?))\1.)*?"/g,
+        $ => {
+          context.set(p($), { source: $.slice(1, -1) });
+          return `"${strings.push($) - 1}"`;
+        }
+      )
+      // grab all other primitives
+      .replace(
+        /(")?\b(true|false|null|-?\d+(?:\.\d+)?)\b/g,
+        ($, quote, source) => {
+          if (!quote) context.set(p(source), { source });
+          return $;
+        }
+      )
+      // put back strings
+      .replace(/"(\d+)"/g, (_, index) => strings[index]),
+      // invoke the reviver with all the things it needs
+      function (key, value) {
+        const args = [key, value];
+        const extra = context.get(value);
+        if (extra) args.push(extra);
+        return reviver.apply(this, args);
+      }
+    );
+  };
+
   // stringify
   const { isArray } = Array;
   const noop = (_, value) => value;
@@ -60,5 +96,10 @@ if (!rawJSON) {
     return result.replace(re, place);
   };
 }
+
+export const reviver = (_, value, context) => (
+  context && typeof value === 'number' && String(value) !== context.source ?
+    BigInt(context.source) : value
+);
 
 export { parse, stringify, rawJSON, isRawJSON };

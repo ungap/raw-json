@@ -15,4 +15,14 @@ JSON.stringify({
   g: JSON.rawJSON(true),
   h: JSON.rawJSON(false)
 });
+
+JSON.parse(
+  JSON.stringify(
+    JSON.rawJSON('12345678901234567890')
+  ),
+  // this is an extra utility to have BigInts back
+  JSON.reviver
+);
+
+// 12345678901234567890n
 ```
