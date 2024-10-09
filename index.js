@@ -45,7 +45,7 @@ if (!rawJSON) {
       value = $.call(this, key, value);
       if (isRawJSON(value)) {
         const { rawJSON } = value;
-        value = [++id, suffix].join('_');
+        value = [++id, suffix].join(':');
         raws.set(value, rawJSON);
       }
       return value;
