@@ -11,7 +11,7 @@
     "ponyfill"
   ],
   "author": "Andrea Giammarchi",
-  "license": "ISC",
+  "license": "MIT",
   "description": "JSON.rawJSON and isRawJSON ponyfill",
   "repository": {
     "type": "git",
