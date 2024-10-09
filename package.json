@@ -1,10 +1,15 @@
 {
   "name": "@ungap/raw-json",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "main": "index.js",
   "module": "index.js",
-  "keywords": ["rawJSON", "isRawJSON", "polyfill", "ponyfill"],
+  "keywords": [
+    "rawJSON",
+    "isRawJSON",
+    "polyfill",
+    "ponyfill"
+  ],
   "author": "Andrea Giammarchi",
   "license": "ISC",
   "description": "JSON.rawJSON and isRawJSON ponyfill",
