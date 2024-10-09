@@ -1,5 +1,7 @@
 # raw-json
 
+[![Coverage Status](https://coveralls.io/repos/github/ungap/raw-json/badge.svg?branch=main)](https://coveralls.io/github/ungap/raw-json?branch=main)
+
 A [JSON.rawJSON](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/rawJSON) and [JSON.isRawJSON](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/isRawJSON) ponyfill (meaning: no global patch applied).
 
 ```js

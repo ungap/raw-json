@@ -4,11 +4,20 @@
   "type": "module",
   "main": "index.js",
   "module": "index.js",
+  "scripts": {
+    "test": "c8 node -e 'JSON.rawJSON=null;import(`./test.js`)'",
+    "coverage": "mkdir -p ./coverage; c8 report --reporter=text-lcov > ./coverage/lcov.info"
+  },
   "keywords": [
     "rawJSON",
     "isRawJSON",
     "polyfill",
     "ponyfill"
+  ],
+  "files": [
+    "index.js",
+    "LICENSE",
+    "README.md"
   ],
   "author": "Andrea Giammarchi",
   "license": "MIT",
@@ -20,5 +29,8 @@
   "bugs": {
     "url": "https://github.com/ungap/raw-json/issues"
   },
-  "homepage": "https://github.com/ungap/raw-json#readme"
+  "homepage": "https://github.com/ungap/raw-json#readme",
+  "devDependencies": {
+    "c8": "^10.1.2"
+  }
 }
