@@ -33,6 +33,7 @@ try {
 catch (_) {}
 
 console.log('w/out reviver:', JSON.parse(JSON.stringify(value, ['bigint'])));
+console.log('with reviver:', JSON.parse(JSON.stringify(value, ['bigint']), JSON.reviver));
 
 // const s = JSON.rawJSON(JSON.stringify('Hello "there"!'));
 // JSON.parse(JSON.stringify({ s }), (key, value, context) => { console.log({ key, value, context }); return value });

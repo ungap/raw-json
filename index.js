@@ -34,39 +34,23 @@ if (!rawJSON) {
 
   // parse
   const p = parse;
-  const context = source => ({ source });
   parse = (text, reviver) => {
-    if (!reviver) return p(text);
-    const contexts = new Map;
-    const strings = [];
-    return p(
-      text
-      // drop strings from the JSON
-      .replace(
-        /"(?:(?=(\\?))\1.)*?"/g,
-        $ => {
-          contexts.set(p($), context($));
-          return `s${strings.push($) - 1}`;
-        }
-      )
-      // grab all other primitives
-      .replace(
-        /(?<!s)\b([0-9eE.-]+|true|false|null)\b/g,
-        $ => {
-          contexts.set(p($), context($));
-          return $;
-        }
-      )
-      // put back strings
-      .replace(/s(\d+)/g, (_, index) => strings[index]),
-      // invoke the reviver with all the things it needs
-      function (key, value) {
-        const args = [key, value];
-        const context = contexts.get(value);
-        if (context) args.push(context);
-        return reviver.apply(this, args);
+    if (reviver) {
+      const $ = reviver;
+      const context = new Map;
+      // parse all primitives in one go: string | number | boolean | null
+      const re = /("(?:(?=(\\?))\2.)*?"\s*:?|[0-9eE.-]+|true|false|null)/g;
+      let match;
+      while (match = re.exec(text)) {
+        const [source] = match;
+        if (source.at(-1) !== ':') context.set(p(source), { source });
       }
-    );
+      reviver = function (key, value) {
+        const ctx = context.get(value);
+        return $.apply(this, ctx ? [key, value, ctx] : [key, value]);
+      };
+    }
+    return p(text, reviver);
   };
 
   // stringify
