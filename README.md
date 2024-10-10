@@ -31,7 +31,7 @@ JSON.parse(
 
 ## About RawJSON
 
-Practically born to solve the fact *BigInt* are broken in current *JS* world, but not in other programming languages such as *Python*, this *ponyfill* allows its consumers to safely store, or retrieve, also *BigInt* primitives as valid values.
+Practically born to solve the fact serialized *BigInts* are broken in current *JS* world, but not necessarily in other programming languages such as *Python*, this *ponyfill* allows its consumers to safely store, or retrieve, also *BigInt* primitives as valid values.
 
 ```js
 const myBigInt = 12345678901234567890n;
