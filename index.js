@@ -58,7 +58,7 @@ if (!rawJSON) {
   const noop = (_, value) => value;
   const fix = (replacer, raws) => {
     let id = 0;
-    const suffix = Math.random();
+    const suffix = `${Math.random()}00`.slice(2);
     const $ = isArray(replacer) ?
       (k, v) => (k === '' || replacer.includes(k) ? v : void 0) :
       (replacer || noop);
@@ -66,7 +66,7 @@ if (!rawJSON) {
       value = $.call(this, key, value);
       if (isRawJSON(value)) {
         const { rawJSON } = value;
-        value = `${++id}.${suffix}`;
+        value = `'${++id}'${suffix}`;
         raws.set(value, rawJSON);
       }
       return value;
