@@ -28,3 +28,61 @@ JSON.parse(
 
 // 12345678901234567890n
 ```
+
+## About RawJSON
+
+Practically born to solve the fact *BigInt* are broken in current *JS* world, but not in other programming languages such as *Python*, this *ponyfill* allows its consumers to safely store, or retrieve, also *BigInt* primitives as valid values.
+
+```js
+const myBigInt = 12345678901234567890n;
+
+// ⚠️ Uncaught TypeError: Do not know how to serialize a BigInt
+JSON.stringify({ myBigInt });
+
+// parsing too big numbers is still allowed by JSON specs
+JSON.parse('{"myBigInt":12345678901234567890}');
+// ⚠️ but the result is lost or incorrect
+{ myBigInt: 12345678901234567000 }
+//                           ^^^
+```
+
+Enter `JSON.rawJSON`, an utility that accepts only primitives, except *Symbols*, and returns a very special, frozen, `null` prototyped object that contains a `rawJSON` public field.
+
+```js
+import * as JSON from 'https://esm.run/@ungap/raw-json';
+
+const myBigInt = 12345678901234567890n;
+
+JSON.isRawJSON(myBigInt);   // false
+
+const asRawJSON = JSON.rawJSON(myBigInt);
+// { rawJSON: '12345678901234567890' }
+
+JSON.isRawJSON(asRawJSON);  // true
+
+JSON.stringify({ myBigInt: asRawJSON });
+// {"myBigInt":12345678901234567890}
+```
+
+At this point the *JSON* string `{"myBigInt":12345678901234567890}` can be posted or parsed back, but to retrieve a *BigInt* back we need to use a *reviver* function.
+
+Differently from the pre-rawJSON era, a *reviver* would receive a `key` and a `value` as arguments, but not the recently introduced `context`.
+Such `context` is passed only if the `value` is a primitive *JSON* value, meaning it's not present when such `value` is an *object* or an *array*, and it contains a `source` field pointing at the original representation of such `value` as *string*.
+
+```js
+JSON.parse(
+  '{"myBigInt":12345678901234567890}',
+  (key, value, context) => {
+    if (context && typeof value === 'number') {
+      console.log({ value, source: context.source });
+      // { value: 12345678901234567000, source: '12345678901234567890' }
+      return BigInt(context.source);
+    }
+    return value;
+  }
+);
+
+{ myBigInt: 12345678901234567890n }
+```
+
+To simplify the repeated *reviver* dance, this module also offers a non standard `JSON.reviver` helper that will recognize *BigInt* and return these when found in the source, keeping all other numbers the same.
