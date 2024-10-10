@@ -32,4 +32,7 @@ try {
 }
 catch (_) {}
 
-console.log(JSON.parse(JSON.stringify(value, ['bigint'])));
+console.log('w/out reviver:', JSON.parse(JSON.stringify(value, ['bigint'])));
+
+// const s = JSON.rawJSON(JSON.stringify('Hello "there"!'));
+// JSON.parse(JSON.stringify({ s }), (key, value, context) => { console.log({ key, value, context }); return value });

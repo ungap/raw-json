@@ -5,6 +5,7 @@
   "main": "index.js",
   "module": "index.js",
   "scripts": {
+    "test:native": "node ./test.js",
     "test": "c8 node -e 'JSON.rawJSON=null;import(`./test.js`)'",
     "coverage": "mkdir -p ./coverage; c8 report --reporter=text-lcov > ./coverage/lcov.info"
   },

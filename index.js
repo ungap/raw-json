@@ -34,9 +34,10 @@ if (!rawJSON) {
 
   // parse
   const p = parse;
+  const context = source => ({ source });
   parse = (text, reviver) => {
     if (!reviver) return p(text);
-    const context = new Map;
+    const contexts = new Map;
     const strings = [];
     return p(
       text
@@ -44,25 +45,25 @@ if (!rawJSON) {
       .replace(
         /"(?:(?=(\\?))\1.)*?"/g,
         $ => {
-          context.set(p($), { source: $.slice(1, -1) });
-          return `"${strings.push($) - 1}"`;
+          contexts.set(p($), context($));
+          return `s${strings.push($) - 1}`;
         }
       )
       // grab all other primitives
       .replace(
-        /(")?\b(true|false|null|-?\d+(?:\.\d+)?)\b/g,
-        ($, quote, source) => {
-          if (!quote) context.set(p(source), { source });
+        /(?<!s)\b([0-9eE.-]+|true|false|null)\b/g,
+        $ => {
+          contexts.set(p($), context($));
           return $;
         }
       )
       // put back strings
-      .replace(/"(\d+)"/g, (_, index) => strings[index]),
+      .replace(/s(\d+)/g, (_, index) => strings[index]),
       // invoke the reviver with all the things it needs
       function (key, value) {
         const args = [key, value];
-        const extra = context.get(value);
-        if (extra) args.push(extra);
+        const context = contexts.get(value);
+        if (context) args.push(context);
         return reviver.apply(this, args);
       }
     );
@@ -90,10 +91,10 @@ if (!rawJSON) {
   const s = stringify;
   stringify = (value, replacer, space) => {
     const raws = new Map;
-    const result = s(value, fix(replacer, raws), space);
-    const re = new RegExp(`"(${[...raws.keys()].join('|')})"`, 'g');
-    const place = (_, key) => raws.get(key);
-    return result.replace(re, place);
+    return s(value, fix(replacer, raws), space).replace(
+      new RegExp(`"(${[...raws.keys()].join('|')})"`, 'g'),
+      (_, key) => raws.get(key)
+    );
   };
 }
 
