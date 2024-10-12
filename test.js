@@ -35,5 +35,19 @@ catch (_) {}
 console.log('w/out reviver:', JSON.parse(JSON.stringify(value, ['bigint'])));
 console.log('with reviver:', JSON.parse(JSON.stringify(value, ['bigint']), JSON.reviver));
 
+console.assert(JSON.stringify({ a: 1, b: 2 }, {
+  apply() {
+    console.log('APPLY');
+  },
+  call() {
+    console.log('CALL');
+  }
+}) === '{"a":1,"b":2}');
+
+console.assert(JSON.stringify({ a: 1, b: 2 }, null) === '{"a":1,"b":2}');
+
+console.assert(JSON.stringify({ a: 1, b: 2 }, (_, v) => v) === '{"a":1,"b":2}');
+
+
 // const s = JSON.rawJSON(JSON.stringify('Hello "there"!'));
 // JSON.parse(JSON.stringify({ s }), (key, value, context) => { console.log({ key, value, context }); return value });
