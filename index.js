@@ -32,10 +32,12 @@ if (!rawJSON) {
     throw new TypeError('Unexpected ' + type);
   };
 
+  const { apply } = Reflect;
+
   // parse
   const p = parse;
   parse = (text, reviver) => {
-    if (reviver) {
+    if (typeof reviver === 'function') {
       const $ = reviver;
       const context = new Map;
       // parse all primitives in one go: string | number | boolean | null
@@ -47,7 +49,7 @@ if (!rawJSON) {
       }
       reviver = function (key, value) {
         const ctx = context.get(value);
-        return $.apply(this, ctx ? [key, value, ctx] : [key, value]);
+        return apply($, this, ctx ? [key, value, ctx] : [key, value]);
       };
     }
     return p(text, reviver);
@@ -56,18 +58,16 @@ if (!rawJSON) {
   // stringify
   const { isArray } = Array;
   const noop = (_, value) => value;
-  const fix = (replacer, raws) => {
+  const fix = (r, raws) => {
     let id = 0;
     const suffix = `${Math.random()}00`.slice(2);
-    const $ = isArray(replacer) ?
-      (k, v) => (k === '' || replacer.includes(k) ? v : void 0) :
-      (replacer || noop);
+    const $ = typeof r === 'function' ? r :
+      (r && isArray(r) ? (k, v) => (!k || r.includes(k) ? v : void 0) : noop);
     return function (key, value) {
-      value = $.call(this, key, value);
+      value = apply($, this, [key, value]);
       if (isRawJSON(value)) {
         const { rawJSON } = value;
-        value = `'${++id}'${suffix}`;
-        raws.set(value, rawJSON);
+        raws.set(value = `'${++id}'${suffix}`, rawJSON);
       }
       return value;
     };
