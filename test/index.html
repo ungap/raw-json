@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@ungap/raw-json VS core-js/json-parse-with-source</title>
+  <script type="module">
+    function assert(JSON, reviver, value, result) {
+      for (const [k, { rawJSON }] of Object.entries(value)) {
+        if (k !== 'array') {
+          const v = k === 'string' ? JSON.stringify(result[k]) : String(result[k]);
+          console.assert(v === rawJSON, k);
+          console.assert(result[k] === JSON.parse(rawJSON, reviver), k);
+        }
+      }
+    }
+
+    function create(JSON) {
+      const array = [];
+      const value = {
+        bigint: JSON.rawJSON(12345678901234567890n),
+        boolean: JSON.rawJSON(true),
+        number: JSON.rawJSON(1.23),
+        string: JSON.rawJSON(JSON.stringify('Hello 1"there"2')),
+        null: JSON.rawJSON(null),
+        array,
+      };
+      for (const [k, { rawJSON }] of Object.entries(value)) {
+        if (k !== 'array') array.push(JSON.rawJSON(rawJSON));
+      }
+      return value;
+    }
+
+    function test(name, JSON, reviver) {
+
+      var value = create(JSON);
+      console.time(name + ' COLD run');
+      var json = JSON.stringify(value, null, '  ');
+      var result = JSON.parse(json, reviver);
+      console.timeEnd(name + ' COLD run');
+      assert(JSON, reviver, value, result);
+
+      var value = create(JSON);
+      for (let i = 0; i < 10; i++) JSON.parse(JSON.stringify(value, null, '  '), reviver);
+
+      var value = create(JSON);
+      console.time(name + ' HOT run');
+      var json = JSON.stringify(value, null, '  ');
+      var result = JSON.parse(json, reviver);
+      console.timeEnd(name + ' HOT run');
+      assert(JSON, reviver, value, result);
+
+      var value = create(JSON);
+      for (let i = 0; i < 100; i++)
+        value.array.push(create(JSON));
+      console.time(name + ' COMPLEX run');
+      var json = JSON.stringify(value, null, '  ');
+      var result = JSON.parse(json, reviver);
+      console.timeEnd(name + ' COMPLEX run');
+      assert(JSON, reviver, value, result);
+    }
+
+    import * as UngapJSON from 'https://cdn.jsdelivr.net/npm/@ungap/raw-json/+esm';
+    const { reviver } = UngapJSON;
+
+    try {
+      test('native', JSON, reviver);
+    }
+    catch (_) {
+      console.log('native JSON.rawJSON is not supported');
+    }
+
+    setTimeout(test, 500, '@ungap/raw-json', UngapJSON, reviver);
+
+    setTimeout(async () => {
+      await import('https://cdn.jsdelivr.net/npm/core-js/proposals/json-parse-with-source/+esm');
+      setTimeout(test, 100, '@core-js/json-parse-with-source', JSON, reviver);
+    }, 1000);
+  </script>
+</head>
+</html>

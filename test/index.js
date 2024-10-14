@@ -1,4 +1,4 @@
-import * as JSON from './index.js';
+import * as JSON from '../index.js';
 
 const array = [];
 
