@@ -38,7 +38,7 @@ if (!rawJSON) {
     if (typeof reviver === 'function') {
       const $ = reviver;
       const a = [];
-      text = text.replace(
+      text = String(text).replace(
         // parse all primitives in one go: string | number | boolean | null
         /(?:"(?:(?=(\\?))\1.)*?"\s*:?|[0-9eE.-]+|true|false|null)/g,
         $ => $.at(-1) !== ':' ? ($[0] === '"' ? (a.push($) - 1) : `"${$}"`) : $
