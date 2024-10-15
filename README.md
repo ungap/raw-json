@@ -87,10 +87,12 @@ JSON.parse(
 
 To simplify the repeated *reviver* dance, this module also offers a non standard `JSON.reviver` helper that will recognize *BigInt* and return these when found in the source, keeping all other numbers the same.
 
-## What about core-js?
+## What about core-js or performance?
 
 This module goal is to temporarily enable *rawJSON* until it gets native support and it moves the minimum amount of code to do so to keep it simple, size-friendly, yet still performant.
 
-If you are interesting in code-size and performance you can [test yourself](https://ungap.github.io/raw-json/test/) in Safari or Firefox.
+If you are interested in code-size and performance you can [test yourself](https://ungap.github.io/raw-json/test/) in Safari or Firefox.
 
 On average, this module is ~1.5X faster on simple cases and 3X up to 5X faster on more complex (nested) cases.
+
+Compared to native Chrome/ium implementation, this module is nearly as fast as that one too, specially with complex values (same test page, this time with Chrome/ium).
