@@ -48,6 +48,16 @@ console.assert(JSON.stringify({ a: 1, b: 2 }, null) === '{"a":1,"b":2}');
 
 console.assert(JSON.stringify({ a: 1, b: 2 }, (_, v) => v) === '{"a":1,"b":2}');
 
+// issue #3 covered
+console.log(
+  JSON.parse('{"a":9007199254740993,"b":9007199254740992}', JSON.reviver),
+  '{ a: 9007199254740993n, b: 9007199254740992 }'
+);
+
+console.log(
+  JSON.parse('{"a":9007199254740992,"b":9007199254740993}', JSON.reviver),
+  '{ a: 9007199254740992, b: 9007199254740993n }'
+);
 
 // const s = JSON.rawJSON(JSON.stringify('Hello "there"!'));
 // JSON.parse(JSON.stringify({ s }), (key, value, context) => { console.log({ key, value, context }); return value });
