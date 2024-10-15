@@ -32,24 +32,24 @@ if (!rawJSON) {
     throw new TypeError('Unexpected ' + type);
   };
 
-  const { apply } = Reflect;
-
   // parse
   const p = parse;
   parse = (text, reviver) => {
     if (typeof reviver === 'function') {
       const $ = reviver;
-      const context = new Map;
-      // parse all primitives in one go: string | number | boolean | null
-      const re = /("(?:(?=(\\?))\2.)*?"\s*:?|[0-9eE.-]+|true|false|null)/g;
-      let match;
-      while (match = re.exec(text)) {
-        const [source] = match;
-        if (source.at(-1) !== ':') context.set(p(source), { source });
-      }
-      reviver = function (key, value) {
-        const ctx = context.get(value);
-        return apply($, this, ctx ? [key, value, ctx] : [key, value]);
+      const a = [];
+      text = text.replace(
+        // parse all primitives in one go: string | number | boolean | null
+        /(?:"(?:(?=(\\?))\1.)*?"\s*:?|[0-9eE.-]+|true|false|null)/g,
+        $ => $.at(-1) !== ':' ? ($[0] === '"' ? (a.push($) - 1) : `"${$}"`) : $
+      );
+      reviver = function (key, source) {
+        switch (typeof source) {
+          // abracadabra
+          case 'number': source = a[source];
+          case 'string': return $.call(this, key, p(source), { source });
+        }
+        return $.call(this, key, source);
       };
     }
     return p(text, reviver);
@@ -64,7 +64,7 @@ if (!rawJSON) {
     const $ = typeof r === 'function' ? r :
       (r && isArray(r) ? (k, v) => (!k || r.includes(k) ? v : void 0) : noop);
     return function (key, value) {
-      value = apply($, this, [key, value]);
+      value = $.call(this, key, value);
       if (isRawJSON(value)) {
         const { rawJSON } = value;
         raws.set(value = `'${++id}'${suffix}`, rawJSON);
