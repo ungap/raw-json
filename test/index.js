@@ -1,5 +1,7 @@
 import * as JSON from '../index.js';
 
+console.assert(JSON.stringify({a:""}) === '{"a":""}');
+
 const array = [];
 
 const value = {
