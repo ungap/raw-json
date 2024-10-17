@@ -75,8 +75,10 @@ if (!rawJSON) {
   const s = stringify;
   stringify = (value, replacer, space) => {
     const m = new Map, t = s(value, fix(replacer, m), space);
-    const re = m.size && new RegExp(`"(${[...m.keys()].join('|')})"`, 'g');
-    return re ? t.replace(re, (_, k) => m.get(k)) : t;
+    return m.size ? t.replace(
+      new RegExp(`"(${[...m.keys()].join('|')})"`, 'g'),
+      (_, k) => m.get(k)
+    ) : t;
   };
 }
 
