@@ -49,7 +49,7 @@ if (!rawJSON) {
           case 'number': source = a[source];
           case 'string': return $.call(this, key, p(source), { source });
         }
-        return $.call(this, key, source);
+        return $.call(this, key, source, {});
       };
     }
     return p(text, reviver);
@@ -83,7 +83,7 @@ if (!rawJSON) {
 }
 
 export const reviver = (_, value, context) => (
-  context && typeof value === 'number' && String(value) !== context.source ?
+  typeof value === 'number' && String(value) !== context.source ?
     BigInt(context.source) : value
 );
 

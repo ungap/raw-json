@@ -63,3 +63,5 @@ console.log(
 
 // const s = JSON.rawJSON(JSON.stringify('Hello "there"!'));
 // JSON.parse(JSON.stringify({ s }), (key, value, context) => { console.log({ key, value, context }); return value });
+
+JSON.parse('{}', (k,v,c) => console.assert(typeof c === 'object'));

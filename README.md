@@ -67,13 +67,13 @@ JSON.stringify({ myBigInt: asRawJSON });
 At this point the *JSON* string `{"myBigInt":12345678901234567890}` can be posted or parsed back, but to retrieve a *BigInt* back we need to use a *reviver* function.
 
 Differently from the pre-rawJSON era, a *reviver* would receive a `key` and a `value` as arguments, but not the recently introduced `context`.
-Such `context` is passed only if the `value` is a primitive *JSON* value, meaning it's not present when such `value` is an *object* or an *array*, and it contains a `source` field pointing at the original representation of such `value` as *string*.
+Such `context` has a `source` value, which points at the original string representation of such `value`, only if the `value` is a primitive *JSON* value, meaning it's not present when such `value` is an *object* or an *array*.
 
 ```js
 JSON.parse(
   '{"myBigInt":12345678901234567890}',
   (key, value, context) => {
-    if (context && typeof value === 'number') {
+    if (typeof value === 'number') {
       console.log({ value, source: context.source });
       // { value: 12345678901234567000, source: '12345678901234567890' }
       return BigInt(context.source);
