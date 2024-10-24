@@ -83,7 +83,7 @@ if (!rawJSON) {
 }
 
 export const reviver = (_, value, context) => (
-  typeof value === 'number' && String(value) !== context.source ?
+  typeof value === 'number' && String(value) !== context?.source ?
     BigInt(context.source) : value
 );
 
