@@ -96,3 +96,11 @@ If you are interested in code-size and performance you can [test yourself](https
 On average, this module is ~1.5X faster on simple cases and 3X up to 5X faster on more complex (nested) cases.
 
 Compared to native Chrome/ium implementation, this module is nearly as fast as that one too, specially with complex values (same test page, this time with Chrome/ium).
+
+### Known limitations VS core-js
+
+If you [seppuku arrays or objects](https://github.com/ungap/raw-json/issues/6) while parsing as opposite of operating on these after their values have been resolved there are chances the result might be not desired.
+
+I am thinking if I should fix or care about these kind of edge-cases / footgun but if I need to end up writing a whole JSON parser then this module can *RIP* and you'd be better off with the *core-js* variant.
+
+Use native `JSON.parse` if you need to perform seppuku on parsed objects values while these are being parsed, use this *ponyfill* alternative for every other case.
