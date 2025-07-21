@@ -17,6 +17,7 @@
     "ponyfill"
   ],
   "files": [
+    "index.d.ts",
     "index.js",
     "LICENSE",
     "README.md"
