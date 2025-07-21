@@ -34,6 +34,6 @@
   },
   "homepage": "https://github.com/ungap/raw-json#readme",
   "devDependencies": {
-    "c8": "^10.1.2"
+    "c8": "^10.1.3"
   }
 }
